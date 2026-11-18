@@ -38,6 +38,12 @@ def health():
             "key_configured": bool(agent.api_key), "snapshot": kb.meta}
 
 
+@app.get("/api/warmup")
+def warmup():
+    """Cheap endpoint the UI pings on load so a sleeping host wakes before the first question."""
+    return {"ok": True}
+
+
 @app.post("/api/chat")
 async def chat(body: ChatIn, request: Request):
     ip = (request.headers.get("x-forwarded-for") or request.client.host).split(",")[0].strip()

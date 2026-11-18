@@ -3,97 +3,231 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Dar Global &amp; Wasalt Assistant</title>
+<title>Knowledge Assistant | Dar Global &amp; Wasalt</title>
 <style>
-:root{--bg:#f6f5f1;--card:#fff;--ink:#1d1d1b;--mute:#6b6a64;--line:#e3e0d6;--acc:#8a6d3b;--acc2:#1f4d3a;--user:#1f4d3a;--userink:#fff}
-@media (prefers-color-scheme:dark){:root{--bg:#121211;--card:#1c1c1a;--ink:#ece9e0;--mute:#9a978c;--line:#2e2d29;--acc:#c9a86a;--acc2:#4c9a78;--user:#2b5e49;--userink:#fff}}
+:root{
+  --bg:#f4f6f8;--surface:#fff;--surface2:#f8f9fb;--ink:#14202e;--ink2:#41505f;--mute:#6b7a8a;--line:#dde3ea;
+  --brand:#12385c;--brand-ink:#fff;--brand2:#0b2742;--accent:#b08d4f;--ok:#1a7f4b;--warn:#a15c00;--err:#b42318;
+  --focus:#2b6cb0;--shadow:0 1px 2px rgba(16,24,40,.06),0 1px 3px rgba(16,24,40,.08)
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#0d131a;--surface:#141c25;--surface2:#18222d;--ink:#e8edf2;--ink2:#b6c2ce;--mute:#8696a6;--line:#25313e;
+  --brand:#3b78b4;--brand-ink:#fff;--brand2:#0a1119;--accent:#d1ae6b;--ok:#4cc38a;--warn:#f0a53a;--err:#f97066;--focus:#6ba7e0;
+  --shadow:none}}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif;height:100dvh;display:flex;flex-direction:column}
-header{padding:14px 16px;border-bottom:1px solid var(--line);background:var(--card)}
-header h1{margin:0;font-size:17px;font-weight:600;letter-spacing:.2px}
-header p{margin:2px 0 0;color:var(--mute);font-size:12.5px}
-#log{flex:1;overflow:auto;padding:16px;max-width:820px;width:100%;margin:0 auto}
-.msg{margin:0 0 14px;display:flex}
-.msg.user{justify-content:flex-end}
-.bubble{max-width:88%;padding:10px 14px;border-radius:14px;background:var(--card);border:1px solid var(--line);white-space:pre-wrap;word-wrap:break-word}
-.user .bubble{background:var(--user);color:var(--userink);border-color:transparent}
-.trace{font-size:12px;color:var(--mute);margin-top:8px;display:flex;flex-wrap:wrap;gap:6px}
-.chip{border:1px solid var(--line);border-radius:999px;padding:2px 9px;background:transparent;white-space:normal}
-.src{font-size:12.5px;margin-top:8px;padding-top:8px;border-top:1px dashed var(--line);color:var(--mute)}
-.src a{color:var(--acc);text-decoration:none}.src a:hover{text-decoration:underline}
-.src div{margin:2px 0;overflow:hidden;text-overflow:ellipsis}
-.cite{color:var(--acc);font-weight:600}
-.meta{font-size:11.5px;color:var(--mute);margin-top:6px}
-#sugg{max-width:820px;margin:0 auto;padding:0 16px 8px;display:flex;flex-wrap:wrap;gap:8px;width:100%}
-#sugg button{font:inherit;font-size:13px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:6px 12px;border-radius:999px;cursor:pointer}
-#sugg button:hover{border-color:var(--acc)}
-form{display:flex;gap:8px;padding:12px 16px calc(12px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:var(--card);max-width:100%}
-.row{display:flex;gap:8px;max-width:820px;width:100%;margin:0 auto}
-textarea{flex:1;resize:none;font:inherit;padding:10px 12px;border-radius:12px;border:1px solid var(--line);background:var(--bg);color:var(--ink);max-height:120px}
-textarea:focus{outline:2px solid var(--acc);outline-offset:-1px}
-#send{font:inherit;font-weight:600;border:0;border-radius:12px;padding:0 18px;background:var(--acc2);color:#fff;cursor:pointer}
-#send:disabled{opacity:.5;cursor:wait}
-.foot{font-size:11px;color:var(--mute);text-align:center;padding:0 16px 8px}
-.dots span{animation:b 1.2s infinite;display:inline-block}.dots span:nth-child(2){animation-delay:.2s}.dots span:nth-child(3){animation-delay:.4s}
-@keyframes b{0%,60%,100%{opacity:.2}30%{opacity:1}}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.6 "Segoe UI",Inter,system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;display:flex;-webkit-font-smoothing:antialiased}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+
+/* sidebar */
+aside{width:272px;flex:none;background:var(--brand2);color:#dbe5ee;display:flex;flex-direction:column;padding:20px 16px}
+.brand{display:flex;align-items:center;gap:10px;padding:0 6px 18px;border-bottom:1px solid rgba(255,255,255,.1)}
+.logo{width:32px;height:32px;border-radius:6px;background:var(--accent);color:#0b2742;font-weight:700;display:grid;place-items:center;letter-spacing:.5px;font-size:13px}
+.brand b{display:block;font-size:14px;color:#fff;font-weight:600;line-height:1.2}
+.brand span{font-size:11.5px;color:#9fb2c5}
+.newchat{margin:16px 0 8px;width:100%;padding:9px 12px;border-radius:6px;border:1px solid rgba(255,255,255,.22);background:transparent;color:#fff;text-align:left;cursor:pointer;display:flex;justify-content:space-between}
+.newchat:hover{background:rgba(255,255,255,.08)}
+.sec{margin-top:18px;padding:0 6px}
+.sec h4{margin:0 0 8px;font-size:11px;letter-spacing:.8px;text-transform:uppercase;color:#8da2b8;font-weight:600}
+.sec ul{list-style:none;margin:0;padding:0}
+.sec li{padding:5px 0;font-size:13px;color:#cbd8e4;display:flex;justify-content:space-between;gap:8px}
+.sec li em{font-style:normal;color:#8da2b8}
+.status{margin-top:auto;padding:12px 6px 0;border-top:1px solid rgba(255,255,255,.1);font-size:12px;color:#9fb2c5;display:flex;align-items:center;gap:8px}
+.dot{width:8px;height:8px;border-radius:50%;background:#7a8a99}
+.dot.ok{background:#3ddc97}.dot.err{background:#f97066}
+
+/* main */
+main{flex:1;min-width:0;display:flex;flex-direction:column;height:100%}
+.top{height:56px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 24px;background:var(--surface);border-bottom:1px solid var(--line)}
+.top h1{margin:0;font-size:15px;font-weight:600}
+.top small{color:var(--mute)}
+.menu{display:none;background:none;border:1px solid var(--line);border-radius:6px;padding:4px 10px;margin-right:10px;cursor:pointer}
+#scroll{flex:1;overflow:auto}
+.wrap{max-width:860px;margin:0 auto;padding:24px 24px 8px}
+
+/* welcome */
+.welcome{padding:48px 0 8px}
+.welcome h2{margin:0 0 6px;font-size:22px;font-weight:600}
+.welcome p{margin:0 0 24px;color:var(--ink2);max-width:60ch}
+.cards{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px 16px;text-align:left;cursor:pointer;box-shadow:var(--shadow)}
+.card:hover{border-color:var(--brand)}
+.card b{display:block;font-size:11px;letter-spacing:.7px;text-transform:uppercase;color:var(--accent);margin-bottom:4px}
+.card span{color:var(--ink)}
+
+/* messages */
+.turn{padding:18px 0;border-bottom:1px solid var(--line)}
+.turn:last-child{border-bottom:0}
+.who{font-size:11.5px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--mute);margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.who .tag{font-weight:500;text-transform:none;letter-spacing:0;border:1px solid var(--line);border-radius:4px;padding:0 6px;background:var(--surface2)}
+.body{color:var(--ink)}
+.body p{margin:0 0 10px}.body p:last-child{margin-bottom:0}
+.body ul,.body ol{margin:0 0 10px;padding-left:22px}.body li{margin:3px 0}
+.body a{color:var(--focus)}
+.body code{background:var(--surface2);border:1px solid var(--line);border-radius:4px;padding:0 4px;font-size:12.5px}
+sup.c{margin-left:1px}
+sup.c a{display:inline-block;min-width:16px;text-align:center;font-size:10.5px;font-weight:600;line-height:16px;border-radius:3px;background:var(--surface2);border:1px solid var(--line);color:var(--brand);text-decoration:none;padding:0 3px}
+sup.c a:hover{background:var(--brand);color:#fff;border-color:var(--brand)}
+.cursor::after{content:"";display:inline-block;width:7px;height:15px;background:var(--mute);margin-left:2px;vertical-align:-2px;animation:bl 1s steps(2) infinite}
+@keyframes bl{50%{opacity:0}}
+.skel{display:grid;gap:8px;max-width:520px}
+.skel i{display:block;height:11px;border-radius:3px;background:linear-gradient(90deg,var(--line),var(--surface2),var(--line));background-size:200% 100%;animation:sh 1.3s infinite}
+@keyframes sh{to{background-position:-200% 0}}
+
+.panel{margin-top:12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);overflow:hidden}
+.panel summary{cursor:pointer;padding:8px 12px;font-size:12.5px;font-weight:600;color:var(--ink2);list-style:none;display:flex;justify-content:space-between}
+.panel summary::-webkit-details-marker{display:none}
+.panel summary::after{content:"+";color:var(--mute)}.panel[open] summary::after{content:"\2212"}
+.panel .in{padding:4px 12px 12px;border-top:1px solid var(--line)}
+.src{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);align-items:flex-start}
+.src:last-child{border-bottom:0}
+.src .n{flex:none;width:20px;height:20px;border-radius:4px;background:var(--surface2);border:1px solid var(--line);font-size:11px;font-weight:600;display:grid;place-items:center;color:var(--brand)}
+.src a{color:var(--ink);text-decoration:none;font-weight:500}.src a:hover{color:var(--focus);text-decoration:underline}
+.src div small{display:block;color:var(--mute);word-break:break-all}
+.step{display:grid;grid-template-columns:130px 1fr;gap:10px;padding:5px 0;font-size:12.5px}
+.step b{color:var(--ink2);font-weight:600}.step span{color:var(--mute);word-break:break-word}
+.meta{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:11.5px;color:var(--mute)}
+.pill{border:1px solid var(--line);border-radius:999px;padding:1px 9px;background:var(--surface2)}
+.act{margin-left:auto;display:flex;gap:4px}
+.act button{background:none;border:1px solid transparent;border-radius:6px;padding:2px 8px;color:var(--mute);cursor:pointer;font-size:12px}
+.act button:hover{border-color:var(--line);color:var(--ink)}
+.err{color:var(--err)}
+
+/* composer */
+.composer{flex:none;background:var(--bg);padding:8px 24px 14px}
+.box{max-width:860px;margin:0 auto;background:var(--surface);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);display:flex;align-items:flex-end;gap:8px;padding:8px}
+.box:focus-within{border-color:var(--focus)}
+textarea{flex:1;border:0;background:transparent;color:var(--ink);font:inherit;resize:none;padding:6px 8px;max-height:140px;outline:none}
+#send{height:36px;padding:0 16px;border-radius:6px;border:0;background:var(--brand);color:var(--brand-ink);font-weight:600;cursor:pointer}
+#send:hover{filter:brightness(1.1)}#send:disabled{opacity:.45;cursor:not-allowed}
+.disc{max-width:860px;margin:8px auto 0;font-size:11.5px;color:var(--mute);text-align:center}
+
+@media (max-width:820px){
+  aside{position:fixed;inset:0 auto 0 0;z-index:20;transform:translateX(-100%);transition:transform .2s}
+  body.nav aside{transform:none}
+  .menu{display:inline-block}.cards{grid-template-columns:1fr}
+  .top,.composer,.wrap{padding-left:16px;padding-right:16px}
+  .step{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important}}
 </style>
 </head>
 <body>
-<header>
-  <h1>Dar Global &amp; Wasalt Assistant</h1>
-  <p>Agentic RAG over public data from darglobal.co.uk and wasalt.sa &middot; answers cite their sources</p>
-</header>
-<div id="log" aria-live="polite"></div>
-<div id="sugg"></div>
-<form id="f"><div class="row">
-  <textarea id="q" rows="1" placeholder="Ask about Dar Global projects, Wasalt listings, markets..." maxlength="2000" aria-label="Message"></textarea>
-  <button id="send" type="submit">Send</button>
-</div></form>
-<div class="foot">Information is a snapshot of public web pages and may be out of date. Not financial advice.</div>
+<aside aria-label="Navigation">
+  <div class="brand"><div class="logo">DG</div><div><b>Knowledge Assistant</b><span>Dar Global &middot; Wasalt</span></div></div>
+  <button class="newchat" id="new" type="button">New conversation <span>+</span></button>
+  <div class="sec"><h4>Knowledge sources</h4>
+    <ul>
+      <li>darglobal.co.uk <em id="s-dg">&ndash;</em></li>
+      <li>wasalt.sa <em id="s-wa">&ndash;</em></li>
+      <li>Wasalt listings <em id="s-li">&ndash;</em></li>
+    </ul></div>
+  <div class="sec"><h4>Capabilities</h4>
+    <ul><li>Company &amp; project information</li><li>Market guides &amp; FAQs</li><li>Listing search with filters</li><li>Cited, source-linked answers</li></ul></div>
+  <div class="status"><span class="dot" id="dot"></span><span id="stat">Connecting&hellip;</span></div>
+</aside>
+
+<main>
+  <div class="top">
+    <div style="display:flex;align-items:center"><button class="menu" id="menu" type="button" aria-label="Menu">Menu</button><h1>Knowledge Assistant</h1></div>
+    <small id="snap"></small>
+  </div>
+  <div id="scroll"><div class="wrap" id="log" aria-live="polite">
+    <section class="welcome" id="welcome">
+      <h2>How can I help you today?</h2>
+      <p>Ask about Dar Global developments and partners, or Wasalt listings, markets and services. Answers are grounded in public website content and cite their sources.</p>
+      <div class="cards" id="cards"></div>
+    </section>
+  </div></div>
+  <div class="composer">
+    <form class="box" id="f">
+      <textarea id="q" rows="1" maxlength="2000" placeholder="Ask a question&hellip;" aria-label="Message"></textarea>
+      <button id="send" type="submit">Send</button>
+    </form>
+    <div class="disc">Responses are generated from a dated snapshot of public web pages and may be incomplete. Verify details on the official sites. Not financial advice.</div>
+  </div>
+</main>
+
 <script>
-const log=document.getElementById('log'),q=document.getElementById('q'),send=document.getElementById('send'),sugg=document.getElementById('sugg');
-let history=[];
-const SUGG=["What is Dar Global and what projects does it have?","Which branded residences does Dar Global offer?","Show apartments for sale in Riyadh under 700,000 SAR","What is the average price of villas in Jeddah?","How does Wasalt auctions work?"];
-SUGG.forEach(t=>{const b=document.createElement('button');b.textContent=t;b.type='button';b.onclick=()=>{q.value=t;ask()};sugg.appendChild(b)});
-function esc(s){return s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
-function render(text,sources){
-  return esc(text).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/\[(\d+)\]/g,(m,n)=>{
-    const s=sources&&sources[n-1];return s?`<a class="cite" href="${esc(s.url)}" target="_blank" rel="noopener" title="${esc(s.title)}">[${n}]</a>`:m});
+const $=s=>document.querySelector(s),log=$('#log'),q=$('#q'),send=$('#send'),scroller=$('#scroll');
+let history=[],busy=false;
+const PROMPTS=[["Company","What is Dar Global and what branded residences does it offer?"],["Projects","Tell me about the Trump-branded developments in Jeddah and Oman"],["Listings","Show apartments for sale in Riyadh under 1,000,000 SAR"],["Market","What is the average price of villas for sale in Jeddah?"],["Services","How do Wasalt property auctions work?"],["Investors","Where is Dar Global listed and what is its portfolio value?"]];
+PROMPTS.forEach(([k,t])=>{const b=document.createElement('button');b.className='card';b.type='button';b.innerHTML=`<b>${k}</b><span>${t}</span>`;b.onclick=()=>{q.value=t;ask()};$('#cards').appendChild(b)});
+
+const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function md(text,sources){
+  const cite=h=>h.replace(/\[(\d+)\]/g,(m,n)=>{const s=sources&&sources[n-1];return s?`<sup class="c"><a href="${esc(s.url)}" target="_blank" rel="noopener" title="${esc(s.title)}">${n}</a></sup>`:m});
+  const inl=t=>cite(esc(t).replace(/\*\*(.+?)\*\*/g,'<b>$1</b>').replace(/`([^`]+)`/g,'<code>$1</code>').replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>'));
+  const out=[];let list=null;
+  const flush=()=>{if(list){out.push(`<${list.t}>${list.i.map(x=>`<li>${x}</li>`).join('')}</${list.t}>`);list=null}};
+  for(const raw of text.split('\n')){
+    const l=raw.trim();let m;
+    if(!l){flush();continue}
+    if(m=l.match(/^[-*•]\s+(.*)/)){if(!list||list.t!=='ul'){flush();list={t:'ul',i:[]}}list.i.push(inl(m[1]))}
+    else if(m=l.match(/^\d+[.)]\s+(.*)/)){if(!list||list.t!=='ol'){flush();list={t:'ol',i:[]}}list.i.push(inl(m[1]))}
+    else if(m=l.match(/^#{1,4}\s+(.*)/)){flush();out.push(`<p><b>${inl(m[1])}</b></p>`)}
+    else{flush();out.push(`<p>${inl(l)}</p>`)}
+  }
+  flush();return out.join('')||'';
 }
-function add(role,html){const m=document.createElement('div');m.className='msg '+role;const b=document.createElement('div');b.className='bubble';b.innerHTML=html;m.appendChild(b);log.appendChild(m);log.scrollTop=log.scrollHeight;return b}
+function turn(role){
+  const t=document.createElement('div');t.className='turn';
+  t.innerHTML=`<div class="who">${role==='user'?'You':'Assistant'}</div><div class="body"></div>`;
+  log.appendChild(t);return t;
+}
+const toBottom=()=>scroller.scrollTop=scroller.scrollHeight;
+const SRC_LABEL={plan:'Query planning',search_listings:'Listing search',search_knowledge:'Knowledge search'};
+
+function finish(t,a){
+  const body=t.querySelector('.body');body.classList.remove('cursor');
+  body.innerHTML=md(a.text,a.sources);
+  const used=(a.sources||[]).map((s,i)=>({s,n:i+1})).filter(x=>new RegExp('\\['+x.n+'\\]').test(a.text));
+  let h='';
+  if(used.length)h+=`<details class="panel"><summary>Sources (${used.length})</summary><div class="in">${used.map(x=>`<div class="src"><span class="n">${x.n}</span><div><a href="${esc(x.s.url)}" target="_blank" rel="noopener">${esc(x.s.title||x.s.url)}</a><small>${esc(x.s.url)}</small></div></div>`).join('')}</div></details>`;
+  if(a.steps&&a.steps.length)h+=`<details class="panel"><summary>Processing steps</summary><div class="in">${a.steps.map(s=>`<div class="step"><b>${SRC_LABEL[s.name]||s.name}</b><span>${esc([s.detail,s.result].filter(Boolean).join(' → '))}</span></div>`).join('')}</div></details>`;
+  h+=`<div class="meta"><span class="pill">${a.cached?'cached':'model: '+esc(a.model.split('/').pop().replace(':free',''))}</span><span class="pill">${a.latency_s}s total</span>${a.first_token_s?`<span class="pill">first token ${a.first_token_s}s</span>`:''}<span class="act"><button type="button" data-copy>Copy</button></span></div>`;
+  body.insertAdjacentHTML('beforeend',h);
+  body.querySelector('[data-copy]').onclick=e=>{navigator.clipboard.writeText(a.text).then(()=>{e.target.textContent='Copied';setTimeout(()=>e.target.textContent='Copy',1500)})};
+}
 async function ask(){
-  const text=q.value.trim();if(!text||send.disabled)return;
-  q.value='';sugg.style.display='none';send.disabled=true;
-  add('user',esc(text));
-  const b=add('bot','<span class="dots"><span>●</span><span>●</span><span>●</span></span><div class="trace"></div>');
-  const trace=b.querySelector('.trace');
-  let answer=null;
+  const text=q.value.trim();if(!text||busy)return;
+  busy=true;send.disabled=true;q.value='';q.style.height='auto';
+  const w=$('#welcome');if(w)w.remove();
+  turn('user').querySelector('.body').innerHTML=`<p>${esc(text)}</p>`;
+  const t=turn('bot'),body=t.querySelector('.body');
+  body.innerHTML='<div class="skel"><i style="width:92%"></i><i style="width:78%"></i><i style="width:60%"></i></div>';toBottom();
+  let acc='',src=[],final=null;
   try{
     const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:text,history})});
-    if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.error||('HTTP '+r.status))}
+    if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.error||'Request failed ('+r.status+')')}
     const rd=r.body.getReader(),dec=new TextDecoder();let buf='';
     while(true){
       const {done,value}=await rd.read();if(done)break;buf+=dec.decode(value,{stream:true});
-      let i;while((i=buf.indexOf('\n'))>=0){const line=buf.slice(0,i);buf=buf.slice(i+1);if(!line.trim())continue;
+      let i;while((i=buf.indexOf('\n'))>=0){const line=buf.slice(0,i).trim();buf=buf.slice(i+1);if(!line)continue;
         const ev=JSON.parse(line);
-        if(ev.type==='status'||ev.type==='tool'){const c=document.createElement('span');c.className='chip';
-          c.textContent=ev.type==='tool'?('🔧 '+ev.name+'('+Object.entries(ev.args).map(([k,v])=>k+': '+v).join(', ')+')'):('🔎 '+ev.message);trace.appendChild(c)}
-        else if(ev.type==='answer')answer=ev;
-        else if(ev.type==='error')throw new Error(ev.message);
-        log.scrollTop=log.scrollHeight;}
+        if(ev.type==='steps')src=ev.sources;
+        else if(ev.type==='reset'){acc='';body.innerHTML='<div class="skel"><i style="width:92%"></i><i style="width:78%"></i></div>'}
+        else if(ev.type==='token'){acc+=ev.text;body.classList.add('cursor');body.innerHTML=md(acc,src);toBottom()}
+        else if(ev.type==='answer')final=ev;
+        else if(ev.type==='error')throw new Error(ev.message)}
     }
-    if(!answer)throw new Error('No answer received');
-    let html=render(answer.text,answer.sources);
-    const used=(answer.sources||[]).map((s,i)=>({s,n:i+1})).filter(x=>new RegExp('\\['+x.n+'\\]').test(answer.text));
-    if(used.length)html+='<div class="src">'+used.map(x=>`<div>[${x.n}] <a href="${esc(x.s.url)}" target="_blank" rel="noopener">${esc(x.s.title||x.s.url)}</a></div>`).join('')+'</div>';
-    html+=`<div class="meta">${esc(answer.model)} &middot; ${answer.latency_s}s &middot; ${answer.steps} tool round(s)</div>`;
-    b.innerHTML=html+'<div class="trace">'+trace.innerHTML+'</div>';
-    history.push({role:'user',content:text},{role:'assistant',content:answer.text});
-  }catch(e){b.innerHTML='⚠️ '+esc(e.message)}
-  send.disabled=false;q.focus();log.scrollTop=log.scrollHeight;
+    if(!final)throw new Error('No response received');
+    finish(t,final);history.push({role:'user',content:text},{role:'assistant',content:final.text});
+  }catch(e){body.classList.remove('cursor');body.innerHTML=`<p class="err">${esc(e.message)}</p>`}
+  busy=false;send.disabled=false;q.focus();toBottom();
 }
-document.getElementById('f').addEventListener('submit',e=>{e.preventDefault();ask()});
+$('#f').addEventListener('submit',e=>{e.preventDefault();ask()});
 q.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();ask()}});
+q.addEventListener('input',()=>{q.style.height='auto';q.style.height=Math.min(q.scrollHeight,140)+'px'});
+$('#new').onclick=()=>location.reload();
+$('#menu').onclick=()=>document.body.classList.toggle('nav');
+fetch('/api/health').then(r=>r.json()).then(h=>{
+  $('#dot').className='dot ok';$('#stat').textContent='Operational';
+  $('#s-dg').textContent=h.snapshot.darglobal_pages+' pages';$('#s-wa').textContent=h.snapshot.wasalt_pages+' pages';$('#s-li').textContent=h.listings;
+  $('#snap').textContent='Data snapshot: '+h.snapshot.scraped_at;
+}).catch(()=>{$('#dot').className='dot err';$('#stat').textContent='Unavailable'});
+q.focus();
 </script>
 </body>
 </html>
