@@ -1,0 +1,7 @@
+data/raw
+scraper
+.env
+.git
+__pycache__
+*.pyc
+README.md
